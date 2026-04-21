@@ -9,7 +9,7 @@ function OrderDetails({ order }) {
         return (
           <Fragment key={orderProduct.product.id}>
             <div className="product-image-container">
-              <img src={orderProduct.product.image} />
+              <img src={orderProduct.product.image} alt={orderProduct.product.name} />
             </div>
 
             <div className="product-details">
@@ -25,13 +25,15 @@ function OrderDetails({ order }) {
                 <img
                   className="buy-again-icon"
                   src="images/icons/buy-again.png"
+                  alt=""
                 />
                 <span className="buy-again-message">Add to Cart</span>
               </button>
             </div>
 
             <div className="product-actions">
-              <Link to="/tracking">
+              {/* ⭐ DİNAMİK LINK - order.id ve product.id ile */}
+              <Link to={`/tracking/${order.id}/${orderProduct.product.id}`}>
                 <button className="track-package-button button-secondary">
                   Track package
                 </button>
