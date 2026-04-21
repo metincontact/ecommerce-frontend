@@ -18,6 +18,8 @@ function OrdersPage({ cart }) {
       setError(null);
       const response = await api.get("/api/orders?expand=products");
       setOrders(response.data);
+      // Veri yapısını görmek için — sorunu bulduktan sonra bu satırı sil
+      console.log("Orders data:", JSON.stringify(response.data[0], null, 2));
     } catch (err) {
       setError("Orders could not be loaded. Please try again.");
       console.error(err);
@@ -35,9 +37,11 @@ function OrdersPage({ cart }) {
     if (!searchQuery) return orders;
     const query = searchQuery.toLowerCase();
     return orders.filter((order) =>
-      order.products.some((p) =>
-        p.product.name.toLowerCase().includes(query)
-      )
+      order.products.some((p) => {
+        // API yapısına göre hem p.product.name hem p.name'i dene
+        const name = p?.product?.name ?? p?.name ?? "";
+        return name.toLowerCase().includes(query);
+      })
     );
   }, [orders, searchQuery]);
 
