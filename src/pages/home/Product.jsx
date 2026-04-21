@@ -4,6 +4,19 @@ import { formatMoney } from "../../utils/money";
 
 function Product({ product, fetchAppData }) {
   const [quantity, setQuantity] = useState(1);
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  async function handleAddToCart() {
+    await api.post("/api/cart-items", {
+      productId: product.id,
+      quantity: quantity,
+    });
+    await fetchAppData();
+
+    // Animasyonu tetikle
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  }
 
   return (
     <div className="product-container" data-testid="product-container">
@@ -12,6 +25,7 @@ function Product({ product, fetchAppData }) {
           className="product-image"
           data-testid="product-image"
           src={product.image}
+          alt={product.name}
         />
       </div>
 
@@ -22,6 +36,7 @@ function Product({ product, fetchAppData }) {
           className="product-rating-stars"
           data-testid="product-rating-stars-image"
           src={`images/ratings/rating-${product.rating.stars * 10}.png`}
+          alt={`${product.rating.stars} stars`}
         />
         <div className="product-rating-count link-primary">
           {product.rating.count}
@@ -33,43 +48,32 @@ function Product({ product, fetchAppData }) {
       <div className="product-quantity-container">
         <select
           value={quantity}
-          onChange={(event) => {
-            const quantitySelected = Number(event.target.value);
-            setQuantity(quantitySelected);
-          }}
+          onChange={(event) => setQuantity(Number(event.target.value))}
         >
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
+          {[1,2,3,4,5,6,7,8,9,10].map((n) => (
+            <option key={n} value={n}>{n}</option>
+          ))}
         </select>
       </div>
 
       <div className="product-spacer"></div>
 
-      <div className="added-to-cart">
-        <img src="images/icons/checkmark.png" />
+      {/* Animasyon: addedToCart true olunca görünür */}
+      <div
+        className="added-to-cart"
+        style={{ opacity: addedToCart ? 1 : 0, transition: "opacity 0.3s ease" }}
+      >
+        <img src="images/icons/checkmark.png" alt="" />
         Added
       </div>
 
       <button
         className="add-to-cart-button button-primary"
         data-testid="add-to-cart-button"
-        onClick={async () => {
-          await api.post("/api/cart-items", {
-            productId: product.id,
-            quantity: quantity,
-          });
-          await fetchAppData();
-        }}
+        onClick={handleAddToCart}
+        disabled={addedToCart}
       >
-        Add to Cart
+        {addedToCart ? "Added!" : "Add to Cart"}
       </button>
     </div>
   );
