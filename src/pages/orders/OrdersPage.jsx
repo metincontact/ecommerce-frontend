@@ -70,7 +70,10 @@ function OrdersPage({ cart }) {
               className="orders-search-input"
               placeholder="Search your orders..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+  console.log("typing:", e.target.value);
+  setSearchQuery(e.target.value);
+}}
             />
             {searchQuery && (
               <button
