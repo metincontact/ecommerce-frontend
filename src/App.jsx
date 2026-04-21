@@ -30,7 +30,7 @@ function App() {
         element={<CheckoutPage cart={cart} fetchAppData={fetchAppData} />}
       />
       <Route path="/orders" element={<OrdersPage cart={cart} />} />
-      <Route path="/tracking" element={<TrackingPage />} />
+      <Route path="/tracking/:orderId/:productId" element={<TrackingPage cart={cart} />} />
     </Routes>
   );
 }
