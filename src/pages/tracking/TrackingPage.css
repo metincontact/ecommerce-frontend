@@ -1,50 +1,192 @@
+/* ===== TRACKING PAGE ===== */
 .tracking-page {
-  max-width: 850px;
-  margin-top: 90px;
+  max-width: 900px;
+  margin-top: 100px;
   margin-bottom: 100px;
   padding-left: 30px;
   padding-right: 30px;
   margin-left: auto;
   margin-right: auto;
+  animation: fadeIn 0.5s ease;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== ORDER TRACKING CARD ===== */
+.tracking-page .order-tracking {
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* ===== BACK LINK ===== */
 .tracking-page .back-to-orders-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 30px;
+  color: #0066c0;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background-color: #f0f7ff;
+  transition: all 0.25s ease;
 }
 
+.tracking-page .back-to-orders-link::before {
+  content: '←';
+  font-size: 18px;
+  transition: transform 0.25s ease;
+}
+
+.tracking-page .back-to-orders-link:hover {
+  background-color: #0066c0;
+  color: #ffffff;
+  transform: translateX(-2px);
+}
+
+.tracking-page .back-to-orders-link:hover::before {
+  transform: translateX(-3px);
+}
+
+/* ===== DELIVERY DATE ===== */
 .tracking-page .delivery-date {
-  font-size: 25px;
+  font-size: 28px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  color: #198754;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
+.tracking-page .delivery-date::before {
+  content: '📦';
+  font-size: 32px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* ===== PRODUCT INFO ===== */
 .tracking-page .product-info {
-  margin-bottom: 3px;
+  margin-bottom: 6px;
+  color: #444;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
+.tracking-page .product-info:first-of-type {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+/* ===== PRODUCT IMAGE ===== */
 .tracking-page .product-image {
-  max-width: 150px;
-  max-height: 150px;
+  max-width: 160px;
+  max-height: 160px;
   margin-top: 25px;
   margin-bottom: 50px;
+  border-radius: 10px;
+  padding: 12px;
+  background-color: #fafafa;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
 }
 
+.tracking-page .product-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== PROGRESS LABELS ===== */
 .tracking-page .progress-labels-container {
   display: flex;
   justify-content: space-between;
-  font-size: 20px;
-  font-weight: 500;
-  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #999;
+  position: relative;
+}
+
+.tracking-page .progress-label {
+  transition: all 0.3s ease;
+  position: relative;
+  padding-top: 8px;
+}
+
+.tracking-page .progress-label::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #d0d0d0;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px #d0d0d0;
+  transition: all 0.3s ease;
 }
 
 .tracking-page .current-status {
-  color: rgb(25, 135, 84);
+  color: #198754;
+  font-weight: 700;
+}
+
+.tracking-page .current-status::before {
+  background-color: #198754;
+  box-shadow: 0 0 0 2px #198754, 0 0 0 6px rgba(25, 135, 84, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px #198754, 0 0 0 6px rgba(25, 135, 84, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 2px #198754, 0 0 0 10px rgba(25, 135, 84, 0.1);
+  }
+}
+
+/* Geçmiş statüler (Preparing - ilk olan) */
+.tracking-page .progress-label:first-child::before {
+  background-color: #198754;
+  box-shadow: 0 0 0 2px #198754;
+}
+
+.tracking-page .progress-label:first-child {
+  color: #198754;
 }
 
 @media (max-width: 575px) {
   .tracking-page .progress-labels-container {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
@@ -52,25 +194,93 @@
   .tracking-page .progress-labels-container {
     flex-direction: column;
     margin-bottom: 5px;
+    gap: 20px;
   }
 
   .tracking-page .progress-label {
     margin-bottom: 3px;
+    padding-left: 30px;
+    padding-top: 0;
+  }
+
+  .tracking-page .progress-label::before {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
   }
 }
 
+/* ===== PROGRESS BAR ===== */
 .tracking-page .progress-bar-container {
-  height: 25px;
+  height: 12px;
   width: 100%;
 
-  border: 1px solid rgb(200, 200, 200);
+  background-color: #f0f0f0;
+  border: none;
   border-radius: 50px;
   overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
 }
 
 .tracking-page .progress-bar {
   height: 100%;
-  background-color: rgb(25, 135, 84);
+  background: linear-gradient(90deg, #198754 0%, #20c997 100%);
   border-radius: 50px;
   width: 50%;
+  position: relative;
+  transition: width 0.8s ease;
+  box-shadow: 0 0 10px rgba(25, 135, 84, 0.4);
+}
+
+/* Hareketli shine efekti */
+.tracking-page .progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shine 2s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 450px) {
+  .tracking-page .progress-bar-container {
+    display: none;
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 575px) {
+  .tracking-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .tracking-page .order-tracking {
+    padding: 24px;
+  }
+
+  .tracking-page .delivery-date {
+    font-size: 22px;
+  }
+
+  .tracking-page .delivery-date::before {
+    font-size: 26px;
+  }
 }
