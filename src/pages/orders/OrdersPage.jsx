@@ -1,5 +1,5 @@
 import api from "../../api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router";
 import "./OrdersPage.css";
 import Header from "../../components/Header";
@@ -12,31 +12,34 @@ function OrdersPage({ cart }) {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    async function fetchOrdersData() {
-      try {
-        setLoading(true);
-        const response = await api.get("/api/orders?expand=products");
-        setOrders(response.data);
-        setError(null);
-      } catch (err) {
-        setError("Siparişler yüklenemedi. Lütfen tekrar dene.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+  const fetchOrdersData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/api/orders?expand=products");
+      setOrders(response.data);
+    } catch (err) {
+      setError("Orders could not be loaded. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    fetchOrdersData();
   }, []);
 
-  // Arama filtreleme
-  const filteredOrders = orders.filter((order) => {
-    if (!searchQuery) return true;
+  useEffect(() => {
+    fetchOrdersData();
+  }, [fetchOrdersData]);
+
+  // useMemo ile gereksiz yeniden hesaplama önleniyor
+  const filteredOrders = useMemo(() => {
+    if (!searchQuery) return orders;
     const query = searchQuery.toLowerCase();
-    return order.products.some((p) =>
-      p.product.name.toLowerCase().includes(query)
+    return orders.filter((order) =>
+      order.products.some((p) =>
+        p.product.name.toLowerCase().includes(query)
+      )
     );
-  });
+  }, [orders, searchQuery]);
 
   return (
     <>
@@ -53,14 +56,14 @@ function OrdersPage({ cart }) {
           )}
         </div>
 
-        {/* Arama çubuğu - sadece sipariş varsa göster */}
+        {/* Search bar - only shown when there are orders */}
         {orders.length > 0 && !loading && (
           <div className="orders-search-container">
             <span className="search-icon-left">🔍</span>
             <input
               type="text"
               className="orders-search-input"
-              placeholder="Siparişlerde ara..."
+              placeholder="Search your orders..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -79,7 +82,7 @@ function OrdersPage({ cart }) {
         {loading && (
           <div className="orders-loading">
             <div className="loading-spinner"></div>
-            <p>Siparişlerin yükleniyor...</p>
+            <p>Loading your orders...</p>
           </div>
         )}
 
@@ -87,40 +90,41 @@ function OrdersPage({ cart }) {
         {error && !loading && (
           <div className="orders-error">
             <div className="error-icon">⚠️</div>
-            <h3>Bir şeyler ters gitti</h3>
+            <h3>Something went wrong</h3>
             <p>{error}</p>
+            {/* window.location.reload() yerine fetchOrdersData çağrılıyor */}
             <button
               className="retry-button"
-              onClick={() => window.location.reload()}
+              onClick={fetchOrdersData}
             >
-              Tekrar dene
+              Try again
             </button>
           </div>
         )}
 
-        {/* Empty State - Hiç sipariş yok */}
+        {/* Empty State - No orders */}
         {!loading && !error && orders.length === 0 && (
           <div className="orders-empty">
             <div className="empty-icon">📦</div>
-            <h3>Henüz siparişin yok</h3>
-            <p>Sipariş verdiğinde burada görünecek.</p>
+            <h3>No orders yet</h3>
+            <p>When you place an order, it will appear here.</p>
             <Link to="/" className="shop-now-button">
-              Alışverişe başla
+              Start shopping
             </Link>
           </div>
         )}
 
-        {/* Arama sonucu boş */}
+        {/* No search results */}
         {!loading && !error && orders.length > 0 && filteredOrders.length === 0 && (
           <div className="orders-empty">
             <div className="empty-icon">🔍</div>
-            <h3>Sonuç bulunamadı</h3>
-            <p>"{searchQuery}" ile eşleşen sipariş yok.</p>
+            <h3>No results found</h3>
+            <p>No orders matching "{searchQuery}".</p>
             <button
               className="shop-now-button"
               onClick={() => setSearchQuery("")}
             >
-              Aramayı temizle
+              Clear search
             </button>
           </div>
         )}
@@ -128,14 +132,12 @@ function OrdersPage({ cart }) {
         {/* Orders List */}
         {!loading && !error && filteredOrders.length > 0 && (
           <div className="orders-grid">
-            {filteredOrders.map((order) => {
-              return (
-                <div key={order.id} className="order-container">
-                  <OrderHeader order={order} />
-                  <OrderDetails order={order} />
-                </div>
-              );
-            })}
+            {filteredOrders.map((order) => (
+              <div key={order.id} className="order-container">
+                <OrderHeader order={order} />
+                <OrderDetails order={order} />
+              </div>
+            ))}
           </div>
         )}
       </div>
