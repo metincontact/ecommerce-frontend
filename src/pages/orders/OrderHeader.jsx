@@ -14,7 +14,6 @@ function OrderHeader({ order }) {
           <div>{formatMoney(order.totalCostCents)}</div>
         </div>
       </div>
-
       <div className="order-header-right-section">
         <div className="order-header-label">Order ID:</div>
         <div>{order.id}</div>
