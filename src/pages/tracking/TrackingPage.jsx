@@ -1,42 +1,204 @@
+import { useParams, Link } from "react-router";
+import { useState, useEffect } from "react";
 import "./TrackingPage.css";
 import Header from "../../components/Header";
+import api from "../../api";
+import dayjs from "dayjs";
 
-function TrackingPage() {
+function getProgressInfo(estimatedDeliveryTimeMs) {
+  const now = Date.now();
+  const deliveryTime = estimatedDeliveryTimeMs;
+
+  if (now >= deliveryTime) {
+    return { status: "Delivered", step: 3, percent: 100 };
+  }
+
+  const estimatedOrderTime = deliveryTime - 7 * 24 * 60 * 60 * 1000;
+  const totalDuration = deliveryTime - estimatedOrderTime;
+  const elapsed = now - estimatedOrderTime;
+  const ratio = Math.min(Math.max(elapsed / totalDuration, 0), 1);
+
+  if (ratio < 0.33) {
+    return { status: "Preparing", step: 1, percent: Math.round(ratio * 100) };
+  } else if (ratio < 0.66) {
+    return { status: "Shipped", step: 2, percent: Math.round(ratio * 100) };
+  } else {
+    return { status: "Out for Delivery", step: 3, percent: Math.round(ratio * 100) };
+  }
+}
+
+const STEPS = ["Preparing", "Shipped", "Out for Delivery", "Delivered"];
+
+function TrackingPage({ cart }) {
+  const { orderId, productId } = useParams();
+  const [orderProduct, setOrderProduct] = useState(null);
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const response = await api.get(`/api/orders?expand=products`);
+        const orders = response.data;
+
+        const foundOrder = orders.find((o) => o.id === orderId);
+        if (!foundOrder) throw new Error("Order not found");
+
+        const foundProduct = foundOrder.products.find(
+          (p) => p.product.id === productId
+        );
+        if (!foundProduct) throw new Error("Product not found in order");
+
+        setOrder(foundOrder);
+        setOrderProduct(foundProduct);
+      } catch (err) {
+        setError(err.message || "Could not load tracking info.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [orderId, productId]);
+
+  const progressInfo = orderProduct
+    ? getProgressInfo(orderProduct.estimatedDeliveryTimeMs)
+    : null;
+
   return (
     <>
-      <title>Tracking</title>
-
-      <Header />
+      <title>Track Package</title>
+      <Header cart={cart} />
 
       <div className="tracking-page">
-        <div className="order-tracking">
-          <a className="back-to-orders-link link-primary" href="/orders">
-            View all orders
-          </a>
 
-          <div className="delivery-date">Arriving on Monday, June 13</div>
-
-          <div className="product-info">
-            Black and Gray Athletic Cotton Socks - 6 Pairs
+        {}
+        {loading && (
+          <div className="tracking-loading">
+            <div className="tracking-spinner"></div>
+            <p>Loading tracking info...</p>
           </div>
+        )}
 
-          <div className="product-info">Quantity: 1</div>
-
-          <img
-            className="product-image"
-            src="images/products/athletic-cotton-socks-6-pairs.jpg"
-          />
-
-          <div className="progress-labels-container">
-            <div className="progress-label">Preparing</div>
-            <div className="progress-label current-status">Shipped</div>
-            <div className="progress-label">Delivered</div>
+        {}
+        {error && !loading && (
+          <div className="tracking-error">
+            <div className="error-icon">⚠️</div>
+            <h3>Something went wrong</h3>
+            <p>{error}</p>
+            <Link to="/orders" className="back-to-orders-link">
+              Back to Orders
+            </Link>
           </div>
+        )}
 
-          <div className="progress-bar-container">
-            <div className="progress-bar"></div>
+        {}
+        {!loading && !error && orderProduct && (
+          <div className="order-tracking">
+
+            <Link to="/orders" className="back-to-orders-link">
+              View all orders
+            </Link>
+
+            <div className="tracking-header">
+              <div className="delivery-date">
+                {progressInfo.status === "Delivered"
+                  ? "Delivered!"
+                  : `Arriving on ${dayjs(orderProduct.estimatedDeliveryTimeMs).format("dddd, MMMM D")}`}
+              </div>
+              <div className="tracking-status-badge" data-step={progressInfo.step}>
+                {progressInfo.status}
+              </div>
+            </div>
+
+            <div className="product-info product-info-name">
+              {orderProduct.product.name}
+            </div>
+            <div className="product-info">
+              Quantity: {orderProduct.quantity}
+            </div>
+            {order && (
+              <div className="product-info order-id-info">
+                Order ID: <span>{order.id}</span>
+              </div>
+            )}
+
+            <img
+              className="product-image"
+              src={orderProduct.product.image}
+              alt={orderProduct.product.name}
+            />
+
+            {}
+            <div className="progress-steps">
+              {STEPS.map((step, index) => {
+                const stepNumber = index + 1;
+                const isCompleted = progressInfo.step > stepNumber;
+                const isCurrent = progressInfo.step === stepNumber;
+                const isPending = progressInfo.step < stepNumber;
+
+                return (
+                  <div
+                    key={step}
+                    className={`progress-step ${isCompleted ? "completed" : ""} ${isCurrent ? "current" : ""} ${isPending ? "pending" : ""}`}
+                  >
+                    <div className="step-dot">
+                      {isCompleted && <span className="step-check">✓</span>}
+                      {isCurrent && <span className="step-pulse"></span>}
+                    </div>
+                    <div className="step-connector"></div>
+                    <div className="step-label">{step}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {}
+            <div className="progress-bar-container">
+              <div
+                className="progress-bar"
+                style={{ width: `${progressInfo.percent}%` }}
+              ></div>
+            </div>
+            <div className="progress-percent">{progressInfo.percent}% complete</div>
+
+            {}
+            <div className="tracking-footer">
+              <div className="tracking-footer-item">
+                <span className="footer-icon">📅</span>
+                <div>
+                  <div className="footer-label">Estimated Delivery</div>
+                  <div className="footer-value">
+                    {dayjs(orderProduct.estimatedDeliveryTimeMs).format("MMMM D, YYYY")}
+                  </div>
+                </div>
+              </div>
+              <div className="tracking-footer-item">
+                <span className="footer-icon">🧾</span>
+                <div>
+                  <div className="footer-label">Order Placed</div>
+                  <div className="footer-value">
+                    {order ? dayjs(order.orderTimeMs).format("MMMM D, YYYY") : "—"}
+                  </div>
+                </div>
+              </div>
+              <div className="tracking-footer-item">
+                <span className="footer-icon">💰</span>
+                <div>
+                  <div className="footer-label">Order Total</div>
+                  <div className="footer-value footer-value-green">
+                    {order
+                      ? `$${(order.totalCostCents / 100).toFixed(2)}`
+                      : "—"}
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </div>
+        )}
       </div>
     </>
   );
