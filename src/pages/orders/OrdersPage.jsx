@@ -6,7 +6,7 @@ import Header from "../../components/Header";
 import OrderHeader from "./OrderHeader";
 import OrderDetails from "./OrderDetails";
 
-function OrdersPage({ cart }) {
+function OrdersPage({ cart, fetchAppData }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -129,7 +129,8 @@ function OrdersPage({ cart }) {
             {filteredOrders.map((order) => (
               <div key={order.id} className="order-container">
                 <OrderHeader order={order} />
-                <OrderDetails order={order} />
+                {/* fetchAppData buradan geçiliyor */}
+                <OrderDetails order={order} fetchAppData={fetchAppData} />
               </div>
             ))}
           </div>
