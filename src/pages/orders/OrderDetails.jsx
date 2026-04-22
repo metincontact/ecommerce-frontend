@@ -6,10 +6,10 @@ import api from "../../api";
 function OrderDetails({ order, fetchAppData }) {
   const [addedItems, setAddedItems] = useState({});
 
-  async function handleBuyAgain(productId) {
+  async function handleBuyAgain(productId, quantity) {
     await api.post("/api/cart-items", {
       productId: productId,
-      quantity: orderProduct.quantity,
+      quantity: quantity,
     });
 
     // Cart state'ini güncelle — refresh gerekmez
@@ -46,7 +46,7 @@ function OrderDetails({ order, fetchAppData }) {
               </div>
               <button
                 className="buy-again-button"
-                onClick={() => handleBuyAgain(orderProduct.product.id)}
+                onClick={() => handleBuyAgain(orderProduct.product.id, orderProduct.quantity)}
                 disabled={isAdded}
               >
                 {isAdded ? (
