@@ -5,22 +5,21 @@ import Header from "../../components/Header";
 import api from "../../api";
 import dayjs from "dayjs";
 
-function getProgressInfo(estimatedDeliveryTimeMs) {
+// Gerçek orderTimeMs kullanılıyor, sabit 7 gün yok
+function getProgressInfo(orderTimeMs, estimatedDeliveryTimeMs) {
   const now = Date.now();
-  const deliveryTime = estimatedDeliveryTimeMs;
 
-  if (now >= deliveryTime) {
-    return { status: "Delivered", step: 3, percent: 100 };
+  if (now >= estimatedDeliveryTimeMs) {
+    return { status: "Delivered", step: 4, percent: 100 };
   }
 
-  const estimatedOrderTime = deliveryTime - 7 * 24 * 60 * 60 * 1000;
-  const totalDuration = deliveryTime - estimatedOrderTime;
-  const elapsed = now - estimatedOrderTime;
+  const totalDuration = estimatedDeliveryTimeMs - orderTimeMs;
+  const elapsed = now - orderTimeMs;
   const ratio = Math.min(Math.max(elapsed / totalDuration, 0), 1);
 
-  if (ratio < 0.33) {
+  if (ratio < 0.25) {
     return { status: "Preparing", step: 1, percent: Math.round(ratio * 100) };
-  } else if (ratio < 0.66) {
+  } else if (ratio < 0.6) {
     return { status: "Shipped", step: 2, percent: Math.round(ratio * 100) };
   } else {
     return { status: "Out for Delivery", step: 3, percent: Math.round(ratio * 100) };
@@ -63,9 +62,11 @@ function TrackingPage({ cart }) {
     fetchData();
   }, [orderId, productId]);
 
-  const progressInfo = orderProduct
-    ? getProgressInfo(orderProduct.estimatedDeliveryTimeMs)
-    : null;
+  // order.orderTimeMs artık kullanılıyor
+  const progressInfo =
+    orderProduct && order
+      ? getProgressInfo(order.orderTimeMs, orderProduct.estimatedDeliveryTimeMs)
+      : null;
 
   return (
     <>
@@ -74,7 +75,6 @@ function TrackingPage({ cart }) {
 
       <div className="tracking-page">
 
-        {}
         {loading && (
           <div className="tracking-loading">
             <div className="tracking-spinner"></div>
@@ -82,7 +82,6 @@ function TrackingPage({ cart }) {
           </div>
         )}
 
-        {}
         {error && !loading && (
           <div className="tracking-error">
             <div className="error-icon">⚠️</div>
@@ -94,8 +93,7 @@ function TrackingPage({ cart }) {
           </div>
         )}
 
-        {}
-        {!loading && !error && orderProduct && (
+        {!loading && !error && orderProduct && progressInfo && (
           <div className="order-tracking">
 
             <Link to="/orders" className="back-to-orders-link">
@@ -131,7 +129,6 @@ function TrackingPage({ cart }) {
               alt={orderProduct.product.name}
             />
 
-            {}
             <div className="progress-steps">
               {STEPS.map((step, index) => {
                 const stepNumber = index + 1;
@@ -155,7 +152,6 @@ function TrackingPage({ cart }) {
               })}
             </div>
 
-            {}
             <div className="progress-bar-container">
               <div
                 className="progress-bar"
@@ -164,7 +160,6 @@ function TrackingPage({ cart }) {
             </div>
             <div className="progress-percent">{progressInfo.percent}% complete</div>
 
-            {}
             <div className="tracking-footer">
               <div className="tracking-footer-item">
                 <span className="footer-icon">📅</span>
@@ -189,9 +184,7 @@ function TrackingPage({ cart }) {
                 <div>
                   <div className="footer-label">Order Total</div>
                   <div className="footer-value footer-value-green">
-                    {order
-                      ? `$${(order.totalCostCents / 100).toFixed(2)}`
-                      : "—"}
+                    {order ? `$${(order.totalCostCents / 100).toFixed(2)}` : "—"}
                   </div>
                 </div>
               </div>
