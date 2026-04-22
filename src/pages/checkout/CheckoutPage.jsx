@@ -1,5 +1,6 @@
 import api from "../../api";
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router";
 import "./CheckoutPage.css";
 import "./checkout-header.css";
 import { formatMoney } from "../../utils/money.js";
@@ -10,9 +11,7 @@ import DeliveryOptions from "./DeliveryOptions.jsx";
 function CheckoutPage({ cart, fetchAppData }) {
   const [deliveryOptions, setDeliveryOptions] = useState([]);
   const [paymentSummary, setPaymentSummary] = useState(null);
-  // Her ürün için edit modunu tutan state: { [productId]: boolean }
   const [editingQuantity, setEditingQuantity] = useState({});
-  // Her ürün için geçici quantity değeri: { [productId]: number }
   const [tempQuantity, setTempQuantity] = useState({});
 
   useEffect(() => {
@@ -28,7 +27,6 @@ function CheckoutPage({ cart, fetchAppData }) {
     fetchCheckoutData();
   }, [cart]);
 
-  // Delete — useCallback ile map dışına alındı
   const deleteCartItem = useCallback(
     async (productId) => {
       await api.delete(`/api/cart-items/${productId}`);
@@ -37,7 +35,6 @@ function CheckoutPage({ cart, fetchAppData }) {
     [fetchAppData]
   );
 
-  // Update quantity
   const updateQuantity = useCallback(
     async (productId) => {
       const newQty = tempQuantity[productId];
@@ -49,7 +46,6 @@ function CheckoutPage({ cart, fetchAppData }) {
     [tempQuantity, fetchAppData]
   );
 
-  // Toplam ürün adedi (hardcoded "3 items" yerine)
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -67,7 +63,6 @@ function CheckoutPage({ cart, fetchAppData }) {
           <div className="checkout-header-middle-section">
             Checkout (
             <a className="return-to-home-link" href="/">
-              {/* Düzeltildi: hardcoded "3 items" yerine gerçek adet */}
               {totalItems} {totalItems === 1 ? "item" : "items"}
             </a>
             )
@@ -80,128 +75,141 @@ function CheckoutPage({ cart, fetchAppData }) {
       </div>
 
       <div className="checkout-page">
-        <div className="page-title">Review your order</div>
 
-        <div className="checkout-grid">
-          <div className="order-summary">
-            {deliveryOptions.length > 0 &&
-              cart.map((cartItem) => {
-                const selectedDeliveryOption = deliveryOptions.find(
-                  (d) => d.id === cartItem.deliveryOptionId
-                );
+        {/* Sepet boşsa empty state göster */}
+        {cart.length === 0 ? (
+          <div className="checkout-empty">
+            <div className="checkout-empty-icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added anything yet.</p>
+            <Link to="/" className="checkout-shop-button">
+              Start shopping
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="page-title">Review your order</div>
 
-                const isEditing = editingQuantity[cartItem.productId];
+            <div className="checkout-grid">
+              <div className="order-summary">
+                {deliveryOptions.length > 0 &&
+                  cart.map((cartItem) => {
+                    const selectedDeliveryOption = deliveryOptions.find(
+                      (d) => d.id === cartItem.deliveryOptionId
+                    );
 
-                return (
-                  <div key={cartItem.productId} className="cart-item-container">
-                    <div className="delivery-date">
-                      Delivery date:{" "}
-                      {dayjs(
-                        selectedDeliveryOption?.estimatedDeliveryTimeMs
-                      ).format("dddd, MMMM D")}
-                    </div>
+                    const isEditing = editingQuantity[cartItem.productId];
 
-                    <div className="cart-item-details-grid">
-                      <img
-                        className="product-image"
-                        src={cartItem.product.image}
-                        alt={cartItem.product.name}
-                      />
-
-                      <div className="cart-item-details">
-                        <div className="product-name">
-                          {cartItem.product.name}
-                        </div>
-                        <div className="product-price">
-                          {formatMoney(cartItem.product.priceCents)}
+                    return (
+                      <div key={cartItem.productId} className="cart-item-container">
+                        <div className="delivery-date">
+                          Delivery date:{" "}
+                          {dayjs(
+                            selectedDeliveryOption?.estimatedDeliveryTimeMs
+                          ).format("dddd, MMMM D")}
                         </div>
 
-                        <div className="product-quantity">
-                          {isEditing ? (
-                            /* Edit modu */
-                            <div className="quantity-edit">
-                              <span className="quantity-label">Quantity: </span>
-                              <select
-                                className="quantity-select"
-                                value={tempQuantity[cartItem.productId] ?? cartItem.quantity}
-                                onChange={(e) =>
-                                  setTempQuantity((prev) => ({
-                                    ...prev,
-                                    [cartItem.productId]: Number(e.target.value),
-                                  }))
-                                }
-                              >
-                                {[1,2,3,4,5,6,7,8,9,10].map((n) => (
-                                  <option key={n} value={n}>{n}</option>
-                                ))}
-                              </select>
-                              <span
-                                className="update-quantity-link link-primary"
-                                onClick={() => updateQuantity(cartItem.productId)}
-                              >
-                                Update
-                              </span>
-                              <span
-                                className="update-quantity-link link-primary"
-                                onClick={() =>
-                                  setEditingQuantity((prev) => ({
-                                    ...prev,
-                                    [cartItem.productId]: false,
-                                  }))
-                                }
-                              >
-                                Cancel
-                              </span>
+                        <div className="cart-item-details-grid">
+                          <img
+                            className="product-image"
+                            src={cartItem.product.image}
+                            alt={cartItem.product.name}
+                          />
+
+                          <div className="cart-item-details">
+                            <div className="product-name">
+                              {cartItem.product.name}
                             </div>
-                          ) : (
-                            /* Normal mod */
-                            <span>
-                              Quantity:{" "}
-                              <span className="quantity-label">
-                                {cartItem.quantity}
-                              </span>
-                              <span
-                                className="update-quantity-link link-primary"
-                                onClick={() => {
-                                  setTempQuantity((prev) => ({
-                                    ...prev,
-                                    [cartItem.productId]: cartItem.quantity,
-                                  }));
-                                  setEditingQuantity((prev) => ({
-                                    ...prev,
-                                    [cartItem.productId]: true,
-                                  }));
-                                }}
-                              >
-                                Update
-                              </span>
-                              <span
-                                className="delete-quantity-link link-primary"
-                                onClick={() => deleteCartItem(cartItem.productId)}
-                              >
-                                Delete
-                              </span>
-                            </span>
-                          )}
+                            <div className="product-price">
+                              {formatMoney(cartItem.product.priceCents)}
+                            </div>
+
+                            <div className="product-quantity">
+                              {isEditing ? (
+                                <div className="quantity-edit">
+                                  <span className="quantity-label">Quantity: </span>
+                                  <select
+                                    className="quantity-select"
+                                    value={tempQuantity[cartItem.productId] ?? cartItem.quantity}
+                                    onChange={(e) =>
+                                      setTempQuantity((prev) => ({
+                                        ...prev,
+                                        [cartItem.productId]: Number(e.target.value),
+                                      }))
+                                    }
+                                  >
+                                    {[1,2,3,4,5,6,7,8,9,10].map((n) => (
+                                      <option key={n} value={n}>{n}</option>
+                                    ))}
+                                  </select>
+                                  <span
+                                    className="update-quantity-link link-primary"
+                                    onClick={() => updateQuantity(cartItem.productId)}
+                                  >
+                                    Update
+                                  </span>
+                                  <span
+                                    className="update-quantity-link link-primary"
+                                    onClick={() =>
+                                      setEditingQuantity((prev) => ({
+                                        ...prev,
+                                        [cartItem.productId]: false,
+                                      }))
+                                    }
+                                  >
+                                    Cancel
+                                  </span>
+                                </div>
+                              ) : (
+                                <span>
+                                  Quantity:{" "}
+                                  <span className="quantity-label">
+                                    {cartItem.quantity}
+                                  </span>
+                                  <span
+                                    className="update-quantity-link link-primary"
+                                    onClick={() => {
+                                      setTempQuantity((prev) => ({
+                                        ...prev,
+                                        [cartItem.productId]: cartItem.quantity,
+                                      }));
+                                      setEditingQuantity((prev) => ({
+                                        ...prev,
+                                        [cartItem.productId]: true,
+                                      }));
+                                    }}
+                                  >
+                                    Update
+                                  </span>
+                                  <span
+                                    className="delete-quantity-link link-primary"
+                                    onClick={() => deleteCartItem(cartItem.productId)}
+                                  >
+                                    Delete
+                                  </span>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <DeliveryOptions
+                            deliveryOptions={deliveryOptions}
+                            cartItem={cartItem}
+                            fetchAppData={fetchAppData}
+                          />
                         </div>
                       </div>
+                    );
+                  })}
+              </div>
 
-                      <DeliveryOptions
-                        deliveryOptions={deliveryOptions}
-                        cartItem={cartItem}
-                        fetchAppData={fetchAppData}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-
-          <PaymentSummary
-            paymentSummary={paymentSummary}
-            fetchAppData={fetchAppData}
-          />
-        </div>
+              <PaymentSummary
+                paymentSummary={paymentSummary}
+                fetchAppData={fetchAppData}
+              />
+            </div>
+          </>
+        )}
       </div>
     </>
   );
