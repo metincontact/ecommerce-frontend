@@ -9,7 +9,7 @@ function OrderDetails({ order, fetchAppData }) {
   async function handleBuyAgain(productId) {
     await api.post("/api/cart-items", {
       productId: productId,
-      quantity: 1,
+      quantity: orderProduct.quantity,
     });
 
     // Cart state'ini güncelle — refresh gerekmez
