@@ -30,7 +30,6 @@ function OrdersPage({ cart }) {
     fetchOrdersData();
   }, [fetchOrdersData]);
 
-  // useMemo ile gereksiz yeniden hesaplama önleniyor
   const filteredOrders = useMemo(() => {
     if (!searchQuery.trim()) return orders;
     const query = searchQuery.trim().toLowerCase();
@@ -61,7 +60,6 @@ function OrdersPage({ cart }) {
           )}
         </div>
 
-        {/* Search bar - only shown when there are orders */}
         {orders.length > 0 && !loading && (
           <div className="orders-search-container">
             <span className="search-icon-left">🔍</span>
@@ -70,10 +68,7 @@ function OrdersPage({ cart }) {
               className="orders-search-input"
               placeholder="Search your orders..."
               value={searchQuery}
-              onChange={(e) => {
-  console.log("typing:", e.target.value);
-  setSearchQuery(e.target.value);
-}}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
               <button
@@ -86,7 +81,6 @@ function OrdersPage({ cart }) {
           </div>
         )}
 
-        {/* Loading State */}
         {loading && (
           <div className="orders-loading">
             <div className="loading-spinner"></div>
@@ -94,23 +88,17 @@ function OrdersPage({ cart }) {
           </div>
         )}
 
-        {/* Error State */}
         {error && !loading && (
           <div className="orders-error">
             <div className="error-icon">⚠️</div>
             <h3>Something went wrong</h3>
             <p>{error}</p>
-            {/* window.location.reload() yerine fetchOrdersData çağrılıyor */}
-            <button
-              className="retry-button"
-              onClick={fetchOrdersData}
-            >
+            <button className="retry-button" onClick={fetchOrdersData}>
               Try again
             </button>
           </div>
         )}
 
-        {/* Empty State - No orders */}
         {!loading && !error && orders.length === 0 && (
           <div className="orders-empty">
             <div className="empty-icon">📦</div>
@@ -122,7 +110,6 @@ function OrdersPage({ cart }) {
           </div>
         )}
 
-        {/* No search results */}
         {!loading && !error && orders.length > 0 && filteredOrders.length === 0 && (
           <div className="orders-empty">
             <div className="empty-icon">🔍</div>
@@ -137,7 +124,6 @@ function OrdersPage({ cart }) {
           </div>
         )}
 
-        {/* Orders List */}
         {!loading && !error && filteredOrders.length > 0 && (
           <div className="orders-grid">
             {filteredOrders.map((order) => (
