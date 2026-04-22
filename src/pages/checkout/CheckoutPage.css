@@ -348,3 +348,87 @@
   margin-bottom: 10px;
   background: linear-gradient(135deg, #ffd814 0%, #f7ca00 100%);
   border: 1px solid #fcd200;
+  color: #111;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+}
+
+.checkout-page .place-order-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f7ca00 0%, #e8bd00 100%);
+  box-shadow: 0 4px 12px rgba(247, 202, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.checkout-page .place-order-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.checkout-page .place-order-button:disabled {
+  cursor: not-allowed;
+}
+
+/* Loading içeriği */
+.checkout-page .place-order-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.checkout-page .place-order-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #111;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 575px) {
+  .checkout-page {
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-top: 130px;
+  }
+
+  .checkout-page .page-title {
+    font-size: 22px;
+  }
+
+  .checkout-page .cart-item-container,
+  .checkout-page .payment-summary {
+    padding: 18px;
+  }
+
+  .checkout-page .product-name {
+    font-size: 15px;
+  }
+
+  .checkout-page .quantity-edit {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .checkout-page .checkout-empty {
+    padding: 60px 20px;
+  }
+
+  .checkout-page .checkout-empty-icon {
+    font-size: 56px;
+  }
+
+  .checkout-page .checkout-empty h2 {
+    font-size: 20px;
+  }
+}
