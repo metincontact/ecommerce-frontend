@@ -1,350 +1,80 @@
-/* ===== CHECKOUT PAGE ===== */
-.checkout-page {
-  max-width: 1100px;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-top: 150px;
-  margin-bottom: 100px;
-  margin-left: auto;
-  margin-right: auto;
-  animation: fadeIn 0.5s ease;
-}
+import { formatMoney } from "../../utils/money";
+import api from "../../api";
+import { useNavigate } from "react-router";
+import { useState } from "react";
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+function PaymentSummary({ paymentSummary, fetchAppData }) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-.checkout-page .page-title {
-  font-weight: 700;
-  font-size: 28px;
-  margin-bottom: 24px;
-  color: #1a1a1a;
-  letter-spacing: -0.3px;
-}
-
-/* ===== GRID LAYOUT ===== */
-.checkout-page .checkout-grid {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  column-gap: 20px;
-  align-items: start;
-}
-
-@media (max-width: 1000px) {
-  .checkout-page .main {
-    max-width: 500px;
+  async function createOrder() {
+    if (loading) return;
+    try {
+      setLoading(true);
+      await api.post("/api/orders");
+      await fetchAppData();
+      navigate("/orders");
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
   }
 
-  .checkout-page .checkout-grid {
-    grid-template-columns: 1fr;
-  }
+  return (
+    <div className="payment-summary">
+      <div className="payment-summary-title">Payment Summary</div>
+      {paymentSummary && (
+        <>
+          <div className="payment-summary-row">
+            <div>Items ({paymentSummary.totalItems}):</div>
+            <div className="payment-summary-money">
+              {formatMoney(paymentSummary.productCostCents)}
+            </div>
+          </div>
+          <div className="payment-summary-row">
+            <div>Shipping &amp; handling:</div>
+            <div className="payment-summary-money">
+              {formatMoney(paymentSummary.shippingCostCents)}
+            </div>
+          </div>
+          <div className="payment-summary-row subtotal-row">
+            <div>Total before tax:</div>
+            <div className="payment-summary-money">
+              {formatMoney(paymentSummary.totalCostBeforeTaxCents)}
+            </div>
+          </div>
+          <div className="payment-summary-row">
+            <div>Estimated tax (10%):</div>
+            <div className="payment-summary-money">
+              {formatMoney(paymentSummary.taxCents)}
+            </div>
+          </div>
+          <div className="payment-summary-row total-row">
+            <div>Order total:</div>
+            <div className="payment-summary-money">
+              {formatMoney(paymentSummary.totalCostCents)}
+            </div>
+          </div>
+
+          <button
+            className="place-order-button button-primary"
+            onClick={createOrder}
+            disabled={loading}
+            style={{ opacity: loading ? 0.7 : 1 }}
+          >
+            {loading ? (
+              <span className="place-order-loading">
+                <span className="place-order-spinner"></span>
+                Placing order...
+              </span>
+            ) : (
+              "Place your order"
+            )}
+          </button>
+        </>
+      )}
+    </div>
+  );
 }
 
-/* ===== CARDS ===== */
-.checkout-page .cart-item-container,
-.checkout-page .payment-summary {
-  background-color: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 10px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
-}
-
-.checkout-page .cart-item-container:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border-color: #d0d0d0;
-}
-
-.checkout-page .cart-item-container {
-  margin-bottom: 16px;
-}
-
-.checkout-page .payment-summary {
-  padding-bottom: 8px;
-  position: sticky;
-  top: 90px;
-}
-
-@media (max-width: 1000px) {
-  .checkout-page .payment-summary {
-    grid-row: 1;
-    margin-bottom: 16px;
-    position: static;
-  }
-}
-
-/* ===== DELIVERY DATE ===== */
-.checkout-page .delivery-date {
-  color: #198754;
-  font-weight: 700;
-  font-size: 19px;
-  margin-top: 5px;
-  margin-bottom: 22px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.checkout-page .delivery-date::before {
-  content: '📦';
-  font-size: 20px;
-}
-
-/* ===== CART ITEM DETAILS ===== */
-.checkout-page .cart-item-details-grid {
-  display: grid;
-  grid-template-columns: 110px 1fr 1fr;
-  column-gap: 25px;
-}
-
-@media (max-width: 1000px) {
-  .checkout-page .cart-item-details-grid {
-    grid-template-columns: 100px 1fr;
-    row-gap: 30px;
-  }
-}
-
-.checkout-page .product-image {
-  max-width: 100%;
-  max-height: 120px;
-  margin-left: auto;
-  margin-right: auto;
-  transition: transform 0.3s ease;
-}
-
-.checkout-page .product-image:hover {
-  transform: scale(1.05);
-}
-
-.checkout-page .product-name {
-  font-weight: 700;
-  font-size: 16px;
-  margin-bottom: 8px;
-  color: #1a1a1a;
-  line-height: 1.4;
-}
-
-.checkout-page .product-price {
-  font-weight: 700;
-  font-size: 17px;
-  margin-bottom: 8px;
-  color: #198754;
-}
-
-.checkout-page .product-quantity {
-  font-size: 14px;
-  color: #555;
-}
-
-.checkout-page .quantity-label {
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.checkout-page .product-quantity .link-primary {
-  margin-left: 8px;
-  color: #0066c0;
-  cursor: pointer;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  padding: 2px 4px;
-  border-radius: 3px;
-}
-
-.checkout-page .product-quantity .link-primary:hover {
-  color: #c7511f;
-  text-decoration: underline;
-  background-color: rgba(199, 81, 31, 0.08);
-}
-
-.checkout-page .delete-quantity-link:hover {
-  color: #d9534f !important;
-  background-color: rgba(217, 83, 79, 0.08) !important;
-}
-
-/* ===== QUANTITY EDIT MODE ===== */
-.checkout-page .quantity-edit {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-top: 4px;
-}
-
-.checkout-page .quantity-select {
-  font-size: 14px;
-  padding: 3px 6px;
-  border-radius: 4px;
-  border: 1.5px solid #198754;
-  color: #1a1a1a;
-  background-color: #fff;
-  cursor: pointer;
-  margin-left: 4px;
-}
-
-.checkout-page .quantity-select:focus {
-  outline: 2px solid #198754;
-}
-
-/* ===== DELIVERY OPTIONS ===== */
-@media (max-width: 1000px) {
-  .checkout-page .delivery-options {
-    grid-column: 1 / span 2;
-  }
-}
-
-.checkout-page .delivery-options-title {
-  font-weight: 700;
-  font-size: 15px;
-  margin-bottom: 14px;
-  color: #1a1a1a;
-}
-
-.checkout-page .delivery-option {
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  margin-bottom: 10px;
-  cursor: pointer;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1.5px solid transparent;
-  transition: all 0.25s ease;
-}
-
-.checkout-page .delivery-option:hover {
-  background-color: #f8f9fa;
-  border-color: #e0e0e0;
-}
-
-.checkout-page .delivery-option:has(.delivery-option-input:checked) {
-  background-color: #e8f5ee;
-  border-color: #198754;
-}
-
-.checkout-page .delivery-option-input {
-  margin: 3px 5px 0px 0px;
-  cursor: pointer;
-  accent-color: #198754;
-  width: 16px;
-  height: 16px;
-}
-
-.checkout-page .delivery-option-date {
-  font-weight: 600;
-  font-size: 15px;
-  margin-bottom: 4px;
-  color: #198754;
-}
-
-.checkout-page .delivery-option-price {
-  color: #666;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* ===== PAYMENT SUMMARY ===== */
-.checkout-page .payment-summary-title {
-  font-weight: 700;
-  font-size: 20px;
-  margin-bottom: 18px;
-  color: #1a1a1a;
-  padding-bottom: 14px;
-  border-bottom: 2px solid #f0f0f0;
-}
-
-.checkout-page .payment-summary-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  font-size: 15px;
-  margin-bottom: 12px;
-  color: #444;
-}
-
-.checkout-page .payment-summary-money {
-  text-align: right;
-  font-weight: 500;
-  color: #1a1a1a;
-}
-
-.checkout-page .subtotal-row .payment-summary-money {
-  border-top: 1px solid #e8e8e8;
-}
-
-.checkout-page .subtotal-row div {
-  padding-top: 12px;
-}
-
-.checkout-page .total-row {
-  color: #198754;
-  font-weight: 700;
-  font-size: 20px;
-  border-top: 2px solid #e8e8e8;
-  padding-top: 18px;
-  margin-top: 4px;
-}
-
-/* ===== PLACE ORDER BUTTON ===== */
-.checkout-page .place-order-button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 8px;
-  margin-top: 22px;
-  margin-bottom: 10px;
-  background: linear-gradient(135deg, #ffd814 0%, #f7ca00 100%);
-  border: 1px solid #fcd200;
-  color: #111;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 0.3px;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
-}
-
-.checkout-page .place-order-button:hover {
-  background: linear-gradient(135deg, #f7ca00 0%, #e8bd00 100%);
-  box-shadow: 0 4px 12px rgba(247, 202, 0, 0.4);
-  transform: translateY(-1px);
-}
-
-.checkout-page .place-order-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
-}
-
-/* ===== MOBILE ===== */
-@media (max-width: 575px) {
-  .checkout-page {
-    padding-left: 16px;
-    padding-right: 16px;
-    margin-top: 130px;
-  }
-
-  .checkout-page .page-title {
-    font-size: 22px;
-  }
-
-  .checkout-page .cart-item-container,
-  .checkout-page .payment-summary {
-    padding: 18px;
-  }
-
-  .checkout-page .product-name {
-    font-size: 15px;
-  }
-
-  .checkout-page .quantity-edit {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-}
+export default PaymentSummary;
