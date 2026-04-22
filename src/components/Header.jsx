@@ -9,41 +9,46 @@ function Header({ cart, onSearch, searchQuery }) {
     });
   }
 
+  // onSearch prop'u geçilmişse aktif, geçilmemişse pasif
+  const isSearchActive = !!onSearch;
+
   return (
-    <>
-      <div className="header">
-        <div className="left-section">
-          <Link to="/" className="header-link">
-            <img className="logo" src="images/logo-white.png" alt="Logo" />
-            <img className="mobile-logo" src="images/mobile-logo-white.png" alt="Logo" />
-          </Link>
-        </div>
-
-        <div className="middle-section">
-          <input
-            className="search-bar"
-            type="text"
-            placeholder="Search"
-            value={searchQuery ?? ""}
-            onChange={(e) => onSearch && onSearch(e.target.value)}
-          />
-          <button className="search-button">
-            <img className="search-icon" src="images/icons/search-icon.png" alt="Search" />
-          </button>
-        </div>
-
-        <div className="right-section">
-          <Link className="orders-link header-link" to="/orders">
-            <span className="orders-text">Orders</span>
-          </Link>
-          <Link className="cart-link header-link" to="/checkout">
-            <img className="cart-icon" src="images/icons/cart-icon.png" alt="Cart" />
-            <div className="cart-quantity">{totalQuantity}</div>
-            <div className="cart-text">Cart</div>
-          </Link>
-        </div>
+    <div className="header">
+      <div className="left-section">
+        <Link to="/" className="header-link">
+          <img className="logo" src="images/logo-white.png" alt="Logo" />
+          <img className="mobile-logo" src="images/mobile-logo-white.png" alt="Logo" />
+        </Link>
       </div>
-    </>
+
+      <div className={`middle-section ${!isSearchActive ? "search-disabled" : ""}`}>
+        <input
+          className="search-bar"
+          type="text"
+          placeholder={isSearchActive ? "Search" : "Search available on home page"}
+          value={isSearchActive ? (searchQuery ?? "") : ""}
+          onChange={(e) => isSearchActive && onSearch(e.target.value)}
+          readOnly={!isSearchActive}
+        />
+        <button
+          className="search-button"
+          disabled={!isSearchActive}
+        >
+          <img className="search-icon" src="images/icons/search-icon.png" alt="Search" />
+        </button>
+      </div>
+
+      <div className="right-section">
+        <Link className="orders-link header-link" to="/orders">
+          <span className="orders-text">Orders</span>
+        </Link>
+        <Link className="cart-link header-link" to="/checkout">
+          <img className="cart-icon" src="images/icons/cart-icon.png" alt="Cart" />
+          <div className="cart-quantity">{totalQuantity}</div>
+          <div className="cart-text">Cart</div>
+        </Link>
+      </div>
+    </div>
   );
 }
 
