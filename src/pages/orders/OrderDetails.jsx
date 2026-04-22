@@ -3,8 +3,7 @@ import { Fragment, useState } from "react";
 import dayjs from "dayjs";
 import api from "../../api";
 
-function OrderDetails({ order }) {
-  // Her ürün için "added" state'i: { [productId]: boolean }
+function OrderDetails({ order, fetchAppData }) {
   const [addedItems, setAddedItems] = useState({});
 
   async function handleBuyAgain(productId) {
@@ -12,6 +11,10 @@ function OrderDetails({ order }) {
       productId: productId,
       quantity: 1,
     });
+
+    // Cart state'ini güncelle — refresh gerekmez
+    if (fetchAppData) await fetchAppData();
+
     setAddedItems((prev) => ({ ...prev, [productId]: true }));
     setTimeout(() => {
       setAddedItems((prev) => ({ ...prev, [productId]: false }));
