@@ -2,10 +2,9 @@ import { useParams, Link } from "react-router";
 import { useState, useEffect } from "react";
 import "./TrackingPage.css";
 import Header from "../../components/Header";
-import api from "../../api";
+import api, { BASE_URL } from "../../api";
 import dayjs from "dayjs";
 
-// Gerçek orderTimeMs kullanılıyor, sabit 7 gün yok
 function getProgressInfo(orderTimeMs, estimatedDeliveryTimeMs) {
   const now = Date.now();
 
@@ -22,7 +21,11 @@ function getProgressInfo(orderTimeMs, estimatedDeliveryTimeMs) {
   } else if (ratio < 0.6) {
     return { status: "Shipped", step: 2, percent: Math.round(ratio * 100) };
   } else {
-    return { status: "Out for Delivery", step: 3, percent: Math.round(ratio * 100) };
+    return {
+      status: "Out for Delivery",
+      step: 3,
+      percent: Math.round(ratio * 100),
+    };
   }
 }
 
@@ -46,7 +49,7 @@ function TrackingPage({ cart }) {
         if (!foundOrder) throw new Error("Order not found");
 
         const foundProduct = foundOrder.products.find(
-          (p) => p.product.id === productId
+          (p) => p.product.id === productId,
         );
         if (!foundProduct) throw new Error("Product not found in order");
 
@@ -74,7 +77,6 @@ function TrackingPage({ cart }) {
       <Header cart={cart} />
 
       <div className="tracking-page">
-
         {loading && (
           <div className="tracking-loading">
             <div className="tracking-spinner"></div>
@@ -95,7 +97,6 @@ function TrackingPage({ cart }) {
 
         {!loading && !error && orderProduct && progressInfo && (
           <div className="order-tracking">
-
             <Link to="/orders" className="back-to-orders-link">
               View all orders
             </Link>
@@ -106,7 +107,10 @@ function TrackingPage({ cart }) {
                   ? "Delivered!"
                   : `Arriving on ${dayjs(orderProduct.estimatedDeliveryTimeMs).format("dddd, MMMM D")}`}
               </div>
-              <div className="tracking-status-badge" data-step={progressInfo.step}>
+              <div
+                className="tracking-status-badge"
+                data-step={progressInfo.step}
+              >
                 {progressInfo.status}
               </div>
             </div>
@@ -125,7 +129,7 @@ function TrackingPage({ cart }) {
 
             <img
               className="product-image"
-              src={orderProduct.product.image}
+              src={`${BASE_URL}/${orderProduct.product.image}`}
               alt={orderProduct.product.name}
             />
 
@@ -158,7 +162,9 @@ function TrackingPage({ cart }) {
                 style={{ width: `${progressInfo.percent}%` }}
               ></div>
             </div>
-            <div className="progress-percent">{progressInfo.percent}% complete</div>
+            <div className="progress-percent">
+              {progressInfo.percent}% complete
+            </div>
 
             <div className="tracking-footer">
               <div className="tracking-footer-item">
@@ -166,7 +172,9 @@ function TrackingPage({ cart }) {
                 <div>
                   <div className="footer-label">Estimated Delivery</div>
                   <div className="footer-value">
-                    {dayjs(orderProduct.estimatedDeliveryTimeMs).format("MMMM D, YYYY")}
+                    {dayjs(orderProduct.estimatedDeliveryTimeMs).format(
+                      "MMMM D, YYYY",
+                    )}
                   </div>
                 </div>
               </div>
@@ -175,7 +183,9 @@ function TrackingPage({ cart }) {
                 <div>
                   <div className="footer-label">Order Placed</div>
                   <div className="footer-value">
-                    {order ? dayjs(order.orderTimeMs).format("MMMM D, YYYY") : "—"}
+                    {order
+                      ? dayjs(order.orderTimeMs).format("MMMM D, YYYY")
+                      : "—"}
                   </div>
                 </div>
               </div>
@@ -184,12 +194,13 @@ function TrackingPage({ cart }) {
                 <div>
                   <div className="footer-label">Order Total</div>
                   <div className="footer-value footer-value-green">
-                    {order ? `$${(order.totalCostCents / 100).toFixed(2)}` : "—"}
+                    {order
+                      ? `$${(order.totalCostCents / 100).toFixed(2)}`
+                      : "—"}
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         )}
       </div>

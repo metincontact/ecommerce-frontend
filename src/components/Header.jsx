@@ -1,5 +1,6 @@
 import "./Header.css";
 import { Link } from "react-router";
+import { BASE_URL } from "../api";
 
 function Header({ cart, onSearch, searchQuery }) {
   let totalQuantity = 0;
@@ -9,32 +10,44 @@ function Header({ cart, onSearch, searchQuery }) {
     });
   }
 
-  // onSearch prop'u geçilmişse aktif, geçilmemişse pasif
   const isSearchActive = !!onSearch;
 
   return (
     <div className="header">
       <div className="left-section">
         <Link to="/" className="header-link">
-          <img className="logo" src="images/logo-white.png" alt="Logo" />
-          <img className="mobile-logo" src="images/mobile-logo-white.png" alt="Logo" />
+          <img
+            className="logo"
+            src={`${BASE_URL}/images/logo-white.png`}
+            alt="Logo"
+          />
+          <img
+            className="mobile-logo"
+            src={`${BASE_URL}/images/mobile-logo-white.png`}
+            alt="Logo"
+          />
         </Link>
       </div>
 
-      <div className={`middle-section ${!isSearchActive ? "search-disabled" : ""}`}>
+      <div
+        className={`middle-section ${!isSearchActive ? "search-disabled" : ""}`}
+      >
         <input
           className="search-bar"
           type="text"
-          placeholder={isSearchActive ? "Search" : "Search available on home page"}
+          placeholder={
+            isSearchActive ? "Search" : "Search available on home page"
+          }
           value={isSearchActive ? (searchQuery ?? "") : ""}
           onChange={(e) => isSearchActive && onSearch(e.target.value)}
           readOnly={!isSearchActive}
         />
-        <button
-          className="search-button"
-          disabled={!isSearchActive}
-        >
-          <img className="search-icon" src="images/icons/search-icon.png" alt="Search" />
+        <button className="search-button" disabled={!isSearchActive}>
+          <img
+            className="search-icon"
+            src={`${BASE_URL}/images/icons/search-icon.png`}
+            alt="Search"
+          />
         </button>
       </div>
 
@@ -43,7 +56,11 @@ function Header({ cart, onSearch, searchQuery }) {
           <span className="orders-text">Orders</span>
         </Link>
         <Link className="cart-link header-link" to="/checkout">
-          <img className="cart-icon" src="images/icons/cart-icon.png" alt="Cart" />
+          <img
+            className="cart-icon"
+            src={`${BASE_URL}/images/icons/cart-icon.png`}
+            alt="Cart"
+          />
           <div className="cart-quantity">{totalQuantity}</div>
           <div className="cart-text">Cart</div>
         </Link>

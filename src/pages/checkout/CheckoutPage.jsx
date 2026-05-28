@@ -1,4 +1,4 @@
-import api from "../../api";
+import api, { BASE_URL } from "../../api";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router";
 import "./CheckoutPage.css";
@@ -17,7 +17,7 @@ function CheckoutPage({ cart, fetchAppData }) {
   useEffect(() => {
     async function fetchCheckoutData() {
       let response = await api.get(
-        "/api/delivery-options?expand=estimatedDeliveryTime"
+        "/api/delivery-options?expand=estimatedDeliveryTime",
       );
       setDeliveryOptions(response.data);
 
@@ -32,7 +32,7 @@ function CheckoutPage({ cart, fetchAppData }) {
       await api.delete(`/api/cart-items/${productId}`);
       await fetchAppData();
     },
-    [fetchAppData]
+    [fetchAppData],
   );
 
   const updateQuantity = useCallback(
@@ -43,7 +43,7 @@ function CheckoutPage({ cart, fetchAppData }) {
       await fetchAppData();
       setEditingQuantity((prev) => ({ ...prev, [productId]: false }));
     },
-    [tempQuantity, fetchAppData]
+    [tempQuantity, fetchAppData],
   );
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -55,8 +55,16 @@ function CheckoutPage({ cart, fetchAppData }) {
         <div className="header-content">
           <div className="checkout-header-left-section">
             <a href="/">
-              <img className="logo" src="images/logo.png" alt="Logo" />
-              <img className="mobile-logo" src="images/mobile-logo.png" alt="Logo" />
+              <img
+                className="logo"
+                src={`${BASE_URL}/images/logo.png`}
+                alt="Logo"
+              />
+              <img
+                className="mobile-logo"
+                src={`${BASE_URL}/images/mobile-logo.png`}
+                alt="Logo"
+              />
             </a>
           </div>
 
@@ -69,13 +77,15 @@ function CheckoutPage({ cart, fetchAppData }) {
           </div>
 
           <div className="checkout-header-right-section">
-            <img src="images/icons/checkout-lock-icon.png" alt="Secure" />
+            <img
+              src={`${BASE_URL}/images/icons/checkout-lock-icon.png`}
+              alt="Secure"
+            />
           </div>
         </div>
       </div>
 
       <div className="checkout-page">
-
         {/* Sepet boşsa empty state göster */}
         {cart.length === 0 ? (
           <div className="checkout-empty">
@@ -95,24 +105,27 @@ function CheckoutPage({ cart, fetchAppData }) {
                 {deliveryOptions.length > 0 &&
                   cart.map((cartItem) => {
                     const selectedDeliveryOption = deliveryOptions.find(
-                      (d) => d.id === cartItem.deliveryOptionId
+                      (d) => d.id === cartItem.deliveryOptionId,
                     );
 
                     const isEditing = editingQuantity[cartItem.productId];
 
                     return (
-                      <div key={cartItem.productId} className="cart-item-container">
+                      <div
+                        key={cartItem.productId}
+                        className="cart-item-container"
+                      >
                         <div className="delivery-date">
                           Delivery date:{" "}
                           {dayjs(
-                            selectedDeliveryOption?.estimatedDeliveryTimeMs
+                            selectedDeliveryOption?.estimatedDeliveryTimeMs,
                           ).format("dddd, MMMM D")}
                         </div>
 
                         <div className="cart-item-details-grid">
                           <img
                             className="product-image"
-                            src={cartItem.product.image}
+                            src={`${BASE_URL}/${cartItem.product.image}`}
                             alt={cartItem.product.name}
                           />
 
@@ -127,24 +140,37 @@ function CheckoutPage({ cart, fetchAppData }) {
                             <div className="product-quantity">
                               {isEditing ? (
                                 <div className="quantity-edit">
-                                  <span className="quantity-label">Quantity: </span>
+                                  <span className="quantity-label">
+                                    Quantity:{" "}
+                                  </span>
                                   <select
                                     className="quantity-select"
-                                    value={tempQuantity[cartItem.productId] ?? cartItem.quantity}
+                                    value={
+                                      tempQuantity[cartItem.productId] ??
+                                      cartItem.quantity
+                                    }
                                     onChange={(e) =>
                                       setTempQuantity((prev) => ({
                                         ...prev,
-                                        [cartItem.productId]: Number(e.target.value),
+                                        [cartItem.productId]: Number(
+                                          e.target.value,
+                                        ),
                                       }))
                                     }
                                   >
-                                    {[1,2,3,4,5,6,7,8,9,10].map((n) => (
-                                      <option key={n} value={n}>{n}</option>
-                                    ))}
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
+                                      (n) => (
+                                        <option key={n} value={n}>
+                                          {n}
+                                        </option>
+                                      ),
+                                    )}
                                   </select>
                                   <span
                                     className="update-quantity-link link-primary"
-                                    onClick={() => updateQuantity(cartItem.productId)}
+                                    onClick={() =>
+                                      updateQuantity(cartItem.productId)
+                                    }
                                   >
                                     Update
                                   </span>
@@ -183,7 +209,9 @@ function CheckoutPage({ cart, fetchAppData }) {
                                   </span>
                                   <span
                                     className="delete-quantity-link link-primary"
-                                    onClick={() => deleteCartItem(cartItem.productId)}
+                                    onClick={() =>
+                                      deleteCartItem(cartItem.productId)
+                                    }
                                   >
                                     Delete
                                   </span>

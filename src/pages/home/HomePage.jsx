@@ -7,23 +7,32 @@ import ProductsGrid from "./ProductsGrid";
 function HomePage({ cart, fetchAppData }) {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function fetchHomeData() {
-      const response = await api.get("/api/products");
-      setProducts(response.data);
+      try {
+        setLoading(true);
+        setError(false);
+        const response = await api.get("/api/products");
+        setProducts(response.data);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchHomeData();
   }, []);
 
-  // Hem name hem keywords üzerinden filtrele
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
     const query = searchQuery.trim().toLowerCase();
     return products.filter((product) => {
       const nameMatch = product.name.toLowerCase().includes(query);
       const keywordMatch = product.keywords?.some((k) =>
-        k.toLowerCase().includes(query)
+        k.toLowerCase().includes(query),
       );
       return nameMatch || keywordMatch;
     });
@@ -32,13 +41,30 @@ function HomePage({ cart, fetchAppData }) {
   return (
     <>
       <title>Ecommerce Project</title>
-      <Header
-        cart={cart}
-        searchQuery={searchQuery}
-        onSearch={setSearchQuery}
-      />
+      <Header cart={cart} searchQuery={searchQuery} onSearch={setSearchQuery} />
       <div className="home-page">
-        {/* Arama sonucu boş */}
+        {loading && (
+          <div className="status-message">
+            <div className="spinner"></div>
+            <p>Loading products...</p>
+            <span className="status-hint">
+              First load may take a moment while the server wakes up.
+            </span>
+          </div>
+        )}
+
+        {error && !loading && (
+          <div className="status-message">
+            <p>Couldn't load products.</p>
+            <button
+              className="search-clear-button"
+              onClick={() => window.location.reload()}
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
         {searchQuery && filteredProducts.length === 0 && (
           <div className="search-empty">
             <div className="search-empty-icon">🔍</div>
@@ -53,7 +79,12 @@ function HomePage({ cart, fetchAppData }) {
           </div>
         )}
 
-        <ProductsGrid products={filteredProducts} fetchAppData={fetchAppData} />
+        {!loading && !error && (
+          <ProductsGrid
+            products={filteredProducts}
+            fetchAppData={fetchAppData}
+          />
+        )}
       </div>
     </>
   );

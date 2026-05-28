@@ -1,4 +1,4 @@
-import api from "../../api";
+import api, { BASE_URL } from "../../api";
 import { useState } from "react";
 import { formatMoney } from "../../utils/money";
 
@@ -24,7 +24,7 @@ function Product({ product, fetchAppData }) {
         <img
           className="product-image"
           data-testid="product-image"
-          src={product.image}
+          src={`${BASE_URL}/${product.image}`}
           alt={product.name}
         />
       </div>
@@ -35,7 +35,7 @@ function Product({ product, fetchAppData }) {
         <img
           className="product-rating-stars"
           data-testid="product-rating-stars-image"
-          src={`images/ratings/rating-${product.rating.stars * 10}.png`}
+          src={`${BASE_URL}/images/ratings/rating-${product.rating.stars * 10}.png`}
           alt={`${product.rating.stars} stars`}
         />
         <div className="product-rating-count link-primary">
@@ -50,8 +50,10 @@ function Product({ product, fetchAppData }) {
           value={quantity}
           onChange={(event) => setQuantity(Number(event.target.value))}
         >
-          {[1,2,3,4,5,6,7,8,9,10].map((n) => (
-            <option key={n} value={n}>{n}</option>
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+            <option key={n} value={n}>
+              {n}
+            </option>
           ))}
         </select>
       </div>
@@ -61,9 +63,12 @@ function Product({ product, fetchAppData }) {
       {/* Animasyon: addedToCart true olunca görünür */}
       <div
         className="added-to-cart"
-        style={{ opacity: addedToCart ? 1 : 0, transition: "opacity 0.3s ease" }}
+        style={{
+          opacity: addedToCart ? 1 : 0,
+          transition: "opacity 0.3s ease",
+        }}
       >
-        <img src="images/icons/checkmark.png" alt="" />
+        <img src={`${BASE_URL}/images/icons/checkmark.png`} alt="" />
         Added
       </div>
 

@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { Fragment, useState } from "react";
 import dayjs from "dayjs";
-import api from "../../api";
+import api, { BASE_URL } from "../../api";
 
 function OrderDetails({ order, fetchAppData }) {
   const [addedItems, setAddedItems] = useState({});
@@ -12,7 +12,6 @@ function OrderDetails({ order, fetchAppData }) {
       quantity: quantity,
     });
 
-    // Cart state'ini güncelle — refresh gerekmez
     if (fetchAppData) await fetchAppData();
 
     setAddedItems((prev) => ({ ...prev, [productId]: true }));
@@ -30,7 +29,7 @@ function OrderDetails({ order, fetchAppData }) {
           <Fragment key={orderProduct.product.id}>
             <div className="product-image-container">
               <img
-                src={orderProduct.product.image}
+                src={`${BASE_URL}/${orderProduct.product.image}`}
                 alt={orderProduct.product.name}
               />
             </div>
@@ -46,7 +45,9 @@ function OrderDetails({ order, fetchAppData }) {
               </div>
               <button
                 className="buy-again-button"
-                onClick={() => handleBuyAgain(orderProduct.product.id, orderProduct.quantity)}
+                onClick={() =>
+                  handleBuyAgain(orderProduct.product.id, orderProduct.quantity)
+                }
                 disabled={isAdded}
               >
                 {isAdded ? (
@@ -58,7 +59,7 @@ function OrderDetails({ order, fetchAppData }) {
                   <>
                     <img
                       className="buy-again-icon"
-                      src="images/icons/buy-again.png"
+                      src={`${BASE_URL}/images/icons/buy-again.png`}
                       alt=""
                     />
                     <span className="buy-again-message">Add to Cart</span>
