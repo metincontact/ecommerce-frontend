@@ -65,7 +65,6 @@ function TrackingPage({ cart }) {
     fetchData();
   }, [orderId, productId]);
 
-  // order.orderTimeMs artık kullanılıyor
   const progressInfo =
     orderProduct && order
       ? getProgressInfo(order.orderTimeMs, orderProduct.estimatedDeliveryTimeMs)
@@ -129,7 +128,7 @@ function TrackingPage({ cart }) {
 
             <img
               className="product-image"
-              src={`${BASE_URL}/${orderProduct.product.image}`}
+              src={orderProduct.product.image}
               alt={orderProduct.product.name}
             />
 

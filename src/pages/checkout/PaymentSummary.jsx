@@ -6,16 +6,18 @@ import { useState } from "react";
 function PaymentSummary({ paymentSummary, fetchAppData }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [orderError, setOrderError] = useState(null);
 
   async function createOrder() {
     if (loading) return;
     try {
       setLoading(true);
+      setOrderError(null);
       await api.post("/api/orders");
       await fetchAppData();
       navigate("/orders");
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setOrderError("Order could not be placed. Please try again.");
       setLoading(false);
     }
   }
@@ -55,6 +57,10 @@ function PaymentSummary({ paymentSummary, fetchAppData }) {
               {formatMoney(paymentSummary.totalCostCents)}
             </div>
           </div>
+
+          {orderError && (
+            <div className="order-error-message">{orderError}</div>
+          )}
 
           <button
             className="place-order-button button-primary"

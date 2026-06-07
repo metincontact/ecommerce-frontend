@@ -129,7 +129,6 @@ function OrdersPage({ cart, fetchAppData }) {
             {filteredOrders.map((order) => (
               <div key={order.id} className="order-container">
                 <OrderHeader order={order} />
-                {/* fetchAppData buradan geçiliyor */}
                 <OrderDetails order={order} fetchAppData={fetchAppData} />
               </div>
             ))}

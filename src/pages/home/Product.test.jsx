@@ -1,10 +1,19 @@
 import { it, expect, describe, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import axios from "axios";
+import { BASE_URL } from "../../api";
+import api from "../../api";
 import Product from "./Product";
 
-vi.mock("axios");
+vi.mock("../../api", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn().mockResolvedValue({}),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+  BASE_URL: "https://ecommerce-backend-bbic.onrender.com",
+}));
 
 describe("Product component", () => {
   let product;
@@ -40,12 +49,9 @@ describe("Product component", () => {
       "images/products/athletic-cotton-socks-6-pairs.jpg",
     );
 
-    expect(screen.getByTestId("product-rating-stars-image")).toHaveAttribute(
-      "src",
-      "images/ratings/rating-45.png",
-    );
+    expect(screen.getByTestId("product-rating-stars-image")).toHaveTextContent("★ 4.5");
 
-    expect(screen.getByText("87")).toBeInTheDocument();
+    expect(screen.getByText("(87)")).toBeInTheDocument();
   });
 
   it("adds a product to the cart", async () => {
@@ -54,7 +60,8 @@ describe("Product component", () => {
     const user = userEvent.setup();
     const addToCartButton = screen.getByTestId("add-to-cart-button");
     await user.click(addToCartButton);
-    expect(axios.post).toHaveBeenCalledWith("/api/cart-items", {
+
+    expect(api.post).toHaveBeenCalledWith("/api/cart-items", {
       productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
       quantity: 1,
     });

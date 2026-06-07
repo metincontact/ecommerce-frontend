@@ -1,10 +1,18 @@
 import { it, expect, describe, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import axios from "axios";
+import api from "../../api";
 import HomePage from "./HomePage";
 
-vi.mock("axios");
+vi.mock("../../api", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+  BASE_URL: "https://ecommerce-backend-bbic.onrender.com",
+}));
 
 describe("HomePage component", () => {
   let fetchAppData;
@@ -12,7 +20,7 @@ describe("HomePage component", () => {
   beforeEach(() => {
     fetchAppData = vi.fn();
 
-    axios.get.mockImplementation(async (urlPath) => {
+    api.get.mockImplementation(async (urlPath) => {
       if (urlPath === "/api/products") {
         return {
           data: [

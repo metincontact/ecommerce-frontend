@@ -1,0 +1,24 @@
+.cart-load-error {
+  background: #fff3cd;
+  border-bottom: 1px solid #ffc107;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #856404;
+}
+
+.cart-error-retry {
+  background: none;
+  border: 1px solid #856404;
+  border-radius: 4px;
+  color: #856404;
+  cursor: pointer;
+  font-size: 13px;
+  margin-left: 8px;
+  padding: 2px 10px;
+}
+
+.cart-error-retry:hover {
+  background: #ffc107;
+  color: #fff;
+}

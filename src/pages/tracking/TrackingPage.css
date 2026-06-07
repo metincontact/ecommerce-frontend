@@ -1,162 +1,136 @@
-/* ===== TRACKING PAGE ===== */
 .tracking-page {
-  max-width: 900px;
-  margin-top: 100px;
-  margin-bottom: 100px;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-left: auto;
-  margin-right: auto;
-  animation: fadeIn 0.5s ease;
+  max-width: 780px;
+  padding: 90px 24px 80px;
+  margin: 0 auto;
+  animation: fadeUp 0.4s ease both;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== ORDER TRACKING CARD ===== */
 .tracking-page .order-tracking {
-  background-color: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
+  background: var(--clr-surface);
+  border-radius: var(--radius-xl);
   padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
-/* ===== BACK LINK ===== */
 .tracking-page .back-to-orders-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 30px;
-  color: #0066c0;
+  margin-bottom: 32px;
+  color: var(--clr-text-2);
   text-decoration: none;
-  font-weight: 600;
   font-size: 14px;
+  font-weight: 600;
   padding: 8px 14px;
-  border-radius: 6px;
-  background-color: #f0f7ff;
-  transition: all 0.25s ease;
+  border-radius: var(--radius-sm);
+  background: var(--clr-bg);
+  border: 1.5px solid var(--clr-border);
+  transition: var(--transition);
 }
 
 .tracking-page .back-to-orders-link::before {
   content: '←';
-  font-size: 18px;
-  transition: transform 0.25s ease;
+  font-size: 16px;
+  transition: transform 0.2s ease;
 }
 
 .tracking-page .back-to-orders-link:hover {
-  background-color: #0066c0;
-  color: #ffffff;
+  background: var(--clr-text);
+  color: #fff;
+  border-color: var(--clr-text);
   transform: translateX(-2px);
 }
 
-.tracking-page .back-to-orders-link:hover::before {
-  transform: translateX(-3px);
-}
-
-/* ===== TRACKING HEADER ===== */
 .tracking-page .tracking-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
-/* ===== DELIVERY DATE ===== */
 .tracking-page .delivery-date {
-  font-size: 26px;
-  font-weight: 700;
-  color: #198754;
+  font-size: 24px;
+  font-weight: 800;
   letter-spacing: -0.5px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  color: var(--clr-text);
 }
 
-.tracking-page .delivery-date::before {
-  content: '📦';
-  font-size: 30px;
-  animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-5px); }
-}
-
-/* ===== STATUS BADGE ===== */
 .tracking-page .tracking-status-badge {
   display: inline-block;
   padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 13px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  background-color: #e8f5ee;
-  color: #198754;
-  border: 1px solid #c3e6cd;
-  white-space: nowrap;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--clr-success-light);
+  color: var(--clr-success);
+  border: 1px solid rgba(22,163,74,0.2);
+}
+
+.tracking-page .tracking-status-badge[data-step="2"] {
+  background: var(--clr-accent-light);
+  color: var(--clr-accent);
+  border-color: rgba(99,102,241,0.2);
 }
 
 .tracking-page .tracking-status-badge[data-step="3"] {
-  background-color: #fff3cd;
-  color: #856404;
-  border-color: #ffc107;
+  background: #fffbeb;
+  color: #b45309;
+  border-color: rgba(234,179,8,0.3);
 }
 
-/* ===== PRODUCT INFO ===== */
 .tracking-page .product-info {
-  margin-bottom: 6px;
-  color: #444;
-  font-size: 15px;
+  font-size: 14px;
+  color: var(--clr-text-2);
+  margin-bottom: 5px;
   line-height: 1.5;
+  font-weight: 500;
 }
 
 .tracking-page .product-info-name {
-  font-weight: 700;
-  color: #1a1a1a;
   font-size: 17px;
-  margin-top: 4px;
+  font-weight: 800;
+  color: var(--clr-text);
+  margin-bottom: 6px;
+  letter-spacing: -0.2px;
 }
 
 .tracking-page .order-id-info {
-  font-size: 13px;
-  color: #888;
+  font-size: 12px;
+  color: var(--clr-text-3);
+  margin-bottom: 24px;
 }
 
 .tracking-page .order-id-info span {
   font-family: 'Courier New', monospace;
-  color: #555;
+  color: var(--clr-text-2);
 }
 
-/* ===== PRODUCT IMAGE ===== */
 .tracking-page .product-image {
-  max-width: 160px;
-  max-height: 160px;
-  margin-top: 25px;
-  margin-bottom: 40px;
-  border-radius: 10px;
-  padding: 12px;
-  background-color: #fafafa;
-  border: 1px solid #f0f0f0;
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  background: #f9f9fb;
+  padding: 16px;
   display: block;
-  transition: all 0.3s ease;
+  margin: 0 0 36px;
+  border: 1px solid var(--clr-border);
+  transition: var(--transition);
 }
 
 .tracking-page .product-image:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.04);
+  box-shadow: var(--shadow-sm);
 }
 
-/* ===== PROGRESS STEPS ===== */
 .tracking-page .progress-steps {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   position: relative;
 }
 
@@ -168,107 +142,85 @@
   position: relative;
 }
 
-/* Connector line between steps */
-.tracking-page .progress-step .step-connector {
-  display: none; /* handled by progress bar */
-}
+.tracking-page .step-connector { display: none; }
 
 .tracking-page .step-dot {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   margin-bottom: 10px;
   z-index: 1;
-  background-color: #e0e0e0;
-  border: 3px solid #ffffff;
-  box-shadow: 0 0 0 2px #e0e0e0;
+  background: var(--clr-border);
+  border: 3px solid var(--clr-surface);
+  box-shadow: 0 0 0 2px var(--clr-border);
   transition: all 0.3s ease;
 }
 
 .tracking-page .progress-step.completed .step-dot {
-  background-color: #198754;
-  box-shadow: 0 0 0 2px #198754;
+  background: var(--clr-success);
+  box-shadow: 0 0 0 2px var(--clr-success);
 }
 
 .tracking-page .progress-step.current .step-dot {
-  background-color: #198754;
-  box-shadow: 0 0 0 2px #198754, 0 0 0 7px rgba(25, 135, 84, 0.18);
+  background: var(--clr-accent);
+  box-shadow: 0 0 0 2px var(--clr-accent), 0 0 0 6px rgba(99,102,241,0.15);
 }
 
 .tracking-page .step-check {
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
 }
 
-/* Pulsing ring for current step */
 .tracking-page .step-pulse {
   display: block;
   width: 10px;
   height: 10px;
-  background-color: white;
+  background: #fff;
   border-radius: 50%;
-  animation: stepPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes stepPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%       { transform: scale(1.4); opacity: 0.7; }
+  animation: pulse 1.4s ease-in-out infinite;
 }
 
 .tracking-page .step-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #aaa;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--clr-text-3);
   text-align: center;
   transition: color 0.3s ease;
-  padding: 0 4px;
+  letter-spacing: 0.02em;
 }
 
-.tracking-page .progress-step.completed .step-label {
-  color: #198754;
-}
-
+.tracking-page .progress-step.completed .step-label,
 .tracking-page .progress-step.current .step-label {
-  color: #198754;
-  font-weight: 700;
+  color: var(--clr-text);
 }
 
-/* ===== PROGRESS BAR ===== */
 .tracking-page .progress-bar-container {
-  height: 10px;
+  height: 8px;
   width: 100%;
-  background-color: #f0f0f0;
-  border-radius: 50px;
+  background: var(--clr-border);
+  border-radius: var(--radius-pill);
   overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   margin-bottom: 6px;
-  position: relative;
 }
 
 .tracking-page .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #198754 0%, #20c997 100%);
-  border-radius: 50px;
+  background: linear-gradient(90deg, var(--clr-accent) 0%, #818cf8 100%);
+  border-radius: var(--radius-pill);
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
   position: relative;
-  transition: width 1s ease;
-  box-shadow: 0 0 10px rgba(25, 135, 84, 0.35);
+  overflow: hidden;
 }
 
 .tracking-page .progress-bar::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.45) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
   animation: shine 2s ease-in-out infinite;
 }
 
@@ -278,19 +230,19 @@
 }
 
 .tracking-page .progress-percent {
-  font-size: 13px;
-  color: #999;
+  font-size: 12px;
+  color: var(--clr-text-3);
   text-align: right;
   margin-bottom: 36px;
+  font-weight: 600;
 }
 
-/* ===== TRACKING FOOTER ===== */
 .tracking-page .tracking-footer {
   display: flex;
-  gap: 0;
-  border-top: 1px solid #f0f0f0;
-  padding-top: 28px;
   flex-wrap: wrap;
+  gap: 0;
+  border-top: 1px solid var(--clr-border);
+  padding-top: 28px;
   gap: 24px;
 }
 
@@ -299,142 +251,73 @@
   align-items: center;
   gap: 14px;
   flex: 1;
-  min-width: 160px;
+  min-width: 150px;
 }
 
 .tracking-page .footer-icon {
-  font-size: 26px;
+  font-size: 24px;
   flex-shrink: 0;
 }
 
 .tracking-page .footer-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #999;
+  letter-spacing: 0.06em;
+  color: var(--clr-text-3);
   margin-bottom: 3px;
 }
 
 .tracking-page .footer-value {
   font-size: 15px;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-weight: 700;
+  color: var(--clr-text);
 }
 
-.tracking-page .footer-value-green {
-  color: #198754;
-}
+.tracking-page .footer-value-green { color: var(--clr-success); }
 
-/* ===== LOADING STATE ===== */
 .tracking-page .tracking-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 100px 20px;
-  gap: 20px;
-  color: #666;
+  gap: 16px;
+  color: var(--clr-text-2);
 }
 
 .tracking-page .tracking-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #f0f0f0;
-  border-top-color: #198754;
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--clr-border);
+  border-top-color: var(--clr-accent);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.75s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ===== ERROR STATE ===== */
 .tracking-page .tracking-error {
   text-align: center;
   padding: 60px 30px;
-  background-color: #fff5f5;
-  border: 1px solid #ffcdd2;
-  border-radius: 12px;
+  background: var(--clr-danger-light);
+  border-radius: var(--radius-lg);
 }
 
-.tracking-page .tracking-error .error-icon {
-  font-size: 52px;
-  margin-bottom: 14px;
-}
+.tracking-page .tracking-error .error-icon { font-size: 48px; margin-bottom: 14px; }
+.tracking-page .tracking-error h3 { color: var(--clr-danger); margin-bottom: 8px; font-size: 20px; font-weight: 800; }
+.tracking-page .tracking-error p { color: var(--clr-text-2); margin-bottom: 20px; }
 
-.tracking-page .tracking-error h3 {
-  color: #c62828;
-  margin-bottom: 8px;
-  font-size: 20px;
-}
-
-.tracking-page .tracking-error p {
-  color: #666;
-  margin-bottom: 20px;
-}
-
-/* ===== RESPONSIVE ===== */
 @media (max-width: 575px) {
-  .tracking-page {
-    padding-left: 16px;
-    padding-right: 16px;
-    margin-top: 80px;
-  }
-
-  .tracking-page .order-tracking {
-    padding: 24px 20px;
-  }
-
-  .tracking-page .delivery-date {
-    font-size: 20px;
-  }
-
-  .tracking-page .tracking-footer {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .tracking-page .step-label {
-    font-size: 12px;
-  }
-
-  .tracking-page .step-dot {
-    width: 26px;
-    height: 26px;
-  }
+  .tracking-page { padding: 80px 16px 60px; }
+  .tracking-page .order-tracking { padding: 24px 18px; }
+  .tracking-page .delivery-date { font-size: 19px; }
+  .tracking-page .tracking-footer { flex-direction: column; gap: 18px; }
+  .tracking-page .step-label { font-size: 11px; }
 }
 
-@media (max-width: 400px) {
-  .tracking-page .progress-steps {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-  }
-
-  .tracking-page .progress-step {
-    flex-direction: row;
-    align-items: center;
-    gap: 14px;
-    flex: none;
-    width: 100%;
-  }
-
-  .tracking-page .step-dot {
-    margin-bottom: 0;
-    flex-shrink: 0;
-  }
-
-  .tracking-page .step-label {
-    text-align: left;
-  }
-
-  .tracking-page .progress-bar-container {
-    display: none;
-  }
-
-  .tracking-page .progress-percent {
-    display: none;
-  }
+@media (max-width: 380px) {
+  .tracking-page .progress-steps { flex-direction: column; gap: 16px; align-items: flex-start; }
+  .tracking-page .progress-step { flex-direction: row; gap: 12px; flex: none; width: 100%; }
+  .tracking-page .step-dot { margin-bottom: 0; flex-shrink: 0; }
+  .tracking-page .step-label { text-align: left; }
+  .tracking-page .progress-bar-container, .tracking-page .progress-percent { display: none; }
 }
